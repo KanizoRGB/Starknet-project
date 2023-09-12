@@ -1,4 +1,4 @@
-# Starknet-project
+# Starknet-Library
 
 Hello everyone, I am Implementing a Starknet based library. The goal is two have two types of participants i.e Administrators and Learners.
 
