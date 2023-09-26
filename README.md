@@ -2,6 +2,15 @@
 
 Hello everyone, I am Implementing a Starknet based library. The goal is two have two types of participants i.e Administrators and Learners.
 
-The participant signs in as one of the two in order to access the library. For both the users, A list of all the books is displayed in alphabetical order when they log in. They both are able to search whether a certain book exists in the catalogue of books or not.
+The participant signs in as one of the two in order to access the library. Upon signing in, a list of all the books is displayed in alphabetical order.
 
-The admins further have the rights to add or delete a book.
+The Learners have the following permissions:
+1.Search for a book
+
+
+The admins have the following permissions:
+1.Search for a book
+2.Add a book.
+3.Delete a book.
+
+

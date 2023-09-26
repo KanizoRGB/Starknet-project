@@ -1,5 +1,6 @@
 use debug::PrintTrait;
-
+use array::ArrayTrait;
+use option::OptionTrait;
 //These are the two types of user who can access the database i.e Admins and students
 #[derive(Copy, Drop, )]
 enum Users  {
@@ -8,6 +9,7 @@ enum Users  {
 }
 
 
+//This is the function which when called grants different rights to the different users
 fn which_user(users:Users)->felt252{
 
     match users{
@@ -27,6 +29,36 @@ fn which_user(users:Users)->felt252{
 
 }
 
+#[derive(Copy,Drop)]
+struct Book{
+    Title:felt252,
+    Genre:felt252,
+    Year:u256,
+}
+
+
+//Database to store array of books
+#[derive(Drop)]
+struct Database{
+    Books:Array<Book>,
+}
+
+
+
+trait AddBookTrait{
+    fn get_book(self:@Book);
+}
+
+impl AddBookImpl of AddBookTrait{
+    fn get_book(self:@Book){
+
+    }
+}
+
+
+
+
+
 fn main(){
     let greeting = 'Hello Log in as:- ';
 
@@ -37,11 +69,9 @@ fn main(){
     ('2.Student').print();
 
 
-    which_user(Users::Student(2));
+    which_user(Users::Student(4)); //Calling the chooser function
 
     // which_user(Users::Admin(1));
-
-
 
 
 }
