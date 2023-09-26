@@ -54,19 +54,49 @@ struct Database{
 
 trait DatabaseTrait{
     fn display_books(self:@Database);
+
+    fn add_book(self:@Database,book:Book);
 }
 
 impl DatabaseTraitImpl of DatabaseTrait{
-    fn display_book(self:@Book){
+    fn display_book(self:@Database){
         let len = self.Books.len();
 
         let mut i:usize = 0;
         
         loop{
-            if i>
+            if len <=i{
+                break;
+            }
+            let mut books:Book = *self.Books[i];
+            books.book_title_display();
+            i+=1;
         }
 
 
+    }
+
+    fn add_book(self:@Database,book:Book){
+        *self.Books.append(book);
+
+    }
+
+    fn search_book(self:@Database,Title:felt252){
+
+        let mut i = 0;
+        loop{
+            let mut booksrch = *self.Books[i];
+
+            if booksrch.Title == Title{
+                'Book Available'.print();
+                Title.print();
+                booksrch.Year.print();
+                booksrch.Genre.print();
+                break;
+            }
+            i+=1;
+        }
+        'Book not found'.print();
     }
 }
 
