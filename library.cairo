@@ -36,7 +36,15 @@ struct Book{
     Year:u256,
 }
 
+trait BookTrait{
+    fn book_title_display(@self:Book)
+}
 
+imp BookTraitImpl of BookTrait{
+    fn book_title_display(@self){
+        *self.Title.print();
+    }
+}
 //Database to store array of books
 #[derive(Drop)]
 struct Database{
@@ -44,13 +52,20 @@ struct Database{
 }
 
 
-
-trait AddBookTrait{
-    fn get_book(self:@Book);
+trait DatabaseTrait{
+    fn display_books(self:@Database);
 }
 
-impl AddBookImpl of AddBookTrait{
-    fn get_book(self:@Book){
+impl DatabaseTraitImpl of DatabaseTrait{
+    fn display_book(self:@Book){
+        let len = self.Books.len();
+
+        let mut i:usize = 0;
+        
+        loop{
+            if i>
+        }
+
 
     }
 }
