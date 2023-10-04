@@ -37,12 +37,13 @@ struct Book{
 }
 
 trait BookTrait{
-    fn book_title_display(self:@Book);
+    fn book_title_display(self:@Book)->felt252;
 }
 
 impl BookTraitImpl of BookTrait{
-    fn book_title_display(self:@Book){
-        *self.Title.print();
+    fn book_title_display(self:@Book)->felt252{
+        let mut Title=*self.Title;
+        Title
     }
 }
 //Database to store array of books
@@ -53,14 +54,18 @@ struct Database{
 
 
 trait DatabaseTrait{
-    fn display_books(ref db:Database);
+    fn display_books(self:@Database);
 
     fn add_book(self:@Database,book:Book);
+
+    fn search_book(self:@Database,Title:felt252)->bool;
 }
 
 impl DatabaseTraitImpl of DatabaseTrait{
-    fn display_book(self:@Database){
-        let len = *self.Books.len();
+    fn display_books(self:@Database){
+        let mut arr = ArrayTrait::new();
+        arr = *self.Books;
+        let len = arr.len();
 
         let mut i:usize = 0;
         
@@ -77,26 +82,31 @@ impl DatabaseTraitImpl of DatabaseTrait{
     }
 
     fn add_book(self:@Database,book:Book){
-        *self.Books.append(book);
+       let mut arr = *self.Books;
+       arr.append(book);
 
     }
 
-    fn search_book(self:@Database,Title:felt252){
+    fn search_book(self:@Database,Title:felt252)->bool{
 
         let mut i = 0;
-        loop{   //--available-gas=20000000 don't forget to pass this when using loops in Cairo
-            let mut booksrch = *self.Books[i];
+        loop{                     //--available-gas=20000000 don't forget to pass this when using loops in Cairo
+            let mut booksrch:Book = *self.Books[i];
 
             if booksrch.Title == Title{
                 'Book Available'.print();
                 Title.print();
                 booksrch.Year.print();
                 booksrch.Genre.print();
+                let mut availability:bool= true;
+                availability;
                 break;
             }
             i+=1;
-        }
+        };
         'Book not found'.print();
+        let mut availability:bool=false;
+        availability
     }
 }
 
@@ -116,7 +126,7 @@ fn main(){
 
     which_user(Users::Student(4)); //Calling the chooser function
 
-    which_user(Users::Admin(1));
+    // which_user(Users::Admin(1));
 
 
 }
