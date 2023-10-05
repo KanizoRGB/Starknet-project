@@ -1,6 +1,8 @@
 use debug::PrintTrait;
-use array::ArrayTrait;
+use array::ArrayTCloneImpl;
 use option::OptionTrait;
+use clone::Clone;
+
 //These are the two types of user who can access the database i.e Admins and students
 #[derive(Copy, Drop, )]
 enum Users  {
@@ -32,20 +34,37 @@ fn which_user(users:Users)->felt252{
 #[derive(Copy,Drop)]
 struct Book{
     Title:felt252,
-    Genre:felt252,
-    Year:u256,
+   // Genre:felt252,
+   // Year:u256,
 }
-
 trait BookTrait{
-    fn book_title_display(self:@Book)->felt252;
+    fn book_title_display(ref self:Book);
 }
 
 impl BookTraitImpl of BookTrait{
-    fn book_title_display(self:@Book)->felt252{
-        let mut Title=*self.Title;
-        Title
+    fn book_title_display(ref self:Book){
+        self.Title.print();
     }
 }
+// #[derive(Copy,Drop)]
+// enum Book2{
+//     Title:felt252,
+//     Genre:felt252,
+//     Year:u256,
+// }
+
+// trait Book2Trait{
+//     fn book_title_display(self:Book2)->felt252;
+// }
+
+// impl Book2TraitImpl of Book2Trait{
+//     fn book_title_display(self:Book2)->felt252{
+//     let mut Title = self::Title(Title);
+//     Title
+//     }
+// }
+
+
 //Database to store array of books
 #[derive(Drop)]
 struct Database{
@@ -56,15 +75,15 @@ struct Database{
 trait DatabaseTrait{
     fn display_books(self:@Database);
 
-    fn add_book(self:@Database,book:Book);
+    fn add_book(ref self:Database,book:Book);
 
-    fn search_book(self:@Database,Title:felt252)->bool;
+    // fn search_book(self:@Database,Title:felt252)->bool;
 }
 
 impl DatabaseTraitImpl of DatabaseTrait{
-    fn display_books(self:@Database){
-        let mut arr = ArrayTrait::new();
-        arr = *self.Books;
+    fn display_books(self: @Database){
+        let mut arr = @ArrayTrait::<Book>::new();
+        arr = self.Books;
         let len = arr.len();
 
         let mut i:usize = 0;
@@ -73,7 +92,7 @@ impl DatabaseTraitImpl of DatabaseTrait{
             if len <=i{
                 break;
             }
-            let mut books:Book = *self.Books[i];
+            let mut books:Book = *arr.at(i);
             books.book_title_display();
             i+=1;
         }
@@ -81,33 +100,34 @@ impl DatabaseTraitImpl of DatabaseTrait{
 
     }
 
-    fn add_book(self:@Database,book:Book){
-       let mut arr = *self.Books;
-       arr.append(book);
+    fn add_book(ref self:Database,book:Book){
+       //let mut arr = db.Books;
+       //arr.append(book);
+       self.Books.append(book);
 
     }
 
-    fn search_book(self:@Database,Title:felt252)->bool{
+    // fn search_book(self:@Database,Title:felt252)->bool{
 
-        let mut i = 0;
-        loop{                     //--available-gas=20000000 don't forget to pass this when using loops in Cairo
-            let mut booksrch:Book = *self.Books[i];
+    //     let mut i = 0;
+    //     loop{                     //--available-gas=20000000 don't forget to pass this when using loops in Cairo
+    //         let mut booksrch:Book = *self.Books[i];
 
-            if booksrch.Title == Title{
-                'Book Available'.print();
-                Title.print();
-                booksrch.Year.print();
-                booksrch.Genre.print();
-                let mut availability:bool= true;
-                availability;
-                break;
-            }
-            i+=1;
-        };
-        'Book not found'.print();
-        let mut availability:bool=false;
-        availability
-    }
+    //         if booksrch.Title == Title{
+    //             'Book Available'.print();
+    //             Title.print();
+    //             booksrch.Year.print();
+    //             booksrch.Genre.print();
+    //             let mut availability:bool= true;
+    //             availability;
+    //             break;
+    //         }
+    //         i+=1;
+    //     };
+    //     'Book not found'.print();
+    //     let mut availability:bool=false;
+    //     availability
+    // }
 }
 
 
@@ -124,9 +144,25 @@ fn main(){
     ('2.Student').print();
 
 
-    which_user(Users::Student(4)); //Calling the chooser function
+    //which_user(Users::Student(4)); //Calling the chooser function
 
     // which_user(Users::Admin(1));
+
+    let mut database = Database{Books:ArrayTrait::new()};
+
+    let book = Book{Title:'Be Rich',};
+    let book2 = Book{Title:'1000 ways',};
+    let book3 = Book{Title:'Influence People',};
+    let book4 = Book{Title:'Lorem Ipsum',};
+    let book5 = Book{Title:'Hello world',};
+
+    database.add_book(book);
+
+    database.add_book(book2);
+
+    database.add_book(book3);
+
+    database.display_books();
 
 
 }

@@ -53,9 +53,9 @@ struct Database{
 
 
 trait DatabaseTrait{
-    fn display_books(ref db:Database);
+    fn display_books(self :@Database);
 
-    fn add_book(self:@Database,book:Book);
+    fn add_book(ref db: Database,book:Book);
 }
 
 impl DatabaseTraitImpl of DatabaseTrait{
