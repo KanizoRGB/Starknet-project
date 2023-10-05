@@ -17,5 +17,7 @@ The admins have the following permissions:-
 
 3.Delete a book.
 
+Challenge::The library should employ a contract which should self reorganize to allow for an efficient search.
+
 
 N/B The capability of each user can change in future upon need
