@@ -40,7 +40,26 @@ mod add_book {
     #[external(v0)]
     impl DatabaseTraitImp of super::DatabaseTrait<ContractState>{
 
-        
+        fn display_books(self:@ContractState){
+
+            let mut arr = @ArrayTrait::<Book>::new();
+
+            arr = self.Books;
+
+            let len = arr.len();
+
+            let mut i:usize = 0;
+
+            loop{
+                 if len <=i{
+                    break;
+                }
+                let mut books:Book = *arr.at(i);
+                books.book_title_display();
+                i+=1;
+            }
+
+        }
 
     }
 
