@@ -1,4 +1,5 @@
-use starknet::{ContractAddress,Store,SyscallResult,StorageBaseAddress};
+use starknet::{ContractAddress,get_caller_address,Store,SyscallResult,StorageBaseAddress,storage_read_syscall, storage_write_syscall,
+    storage_address_from_base_and_offset,};
 use array::ArrayTrait;
 use hash::{HashStateTrait,Hash};
 
@@ -84,16 +85,37 @@ mod add_book{
     use super::StoreFelt252Array;
     use starknet::get_caller_address;
     use super::Book;
+    use starknet::ContractAddress;
 
 
     #[storage]
     struct Storage {
         Books:LegacyMap::<Book,felt252>,
-        arr:Array<felt252>
+        arr:Array<felt252>,
+        admin:LegacyMap::<ContractAddress,bool>,
+        student:LegacyMap::<ContractAddress,bool>,
     }
 
+    // fn add_book2(ref self: ContractState,key:Book)->Array<felt252>{
+    //     let mut count:u32 = 0;
+    //     self.Books.write(key,key.Title); //writes a book struct as key, and title as value
+    //     count+=1;
+    //     let mut arr:Array<felt252> = ArrayTrait::new();
+    //     let mut bk:felt252= self.Books.read(key);
+    //     arr.append(bk)
+    // }
+
 #[constructor]
-fn constructor(ref self: ContractState) {
+fn constructor(ref self: ContractState,admin_1:ContractAddress,
+student_1:ContractAddress,
+student_2:ContractAddress,
+student_3:ContractAddress){
+
+    self.create_admin(admin_1);
+    self.create_student(student_1,student_2,student_3);
+    // self.create_student(student_2);
+    // self.create_student(student_3);
+
     let book1 = Book{Title:'Be Rich',};
     let book2 = Book{Title:'1000 ways',};
     let book3 = Book{Title:'Influence People',};
@@ -107,13 +129,27 @@ fn constructor(ref self: ContractState) {
     self.Books.write(book5,book5.Title);
 }
 
+#[event]
+#[derive(Drop,starknet::Event)]
+enum Event{
+    IllegalAdd:IllegalAdd,
+}
+
+#[derive(Drop,starknet::Event)]
+struct IllegalAdd{
+    illegal_admin:ContractAddress,
+}
+
 #[external(v0)]
 #[abi(embed_v0)]
 impl DataBaseTraitImpl of super::DatabaseTrait<ContractState>{
     fn add_book(ref self: ContractState,key:Book){
-        self.Books.write(key,key.Title); //writes a book struct as key, and title as value
 
-        // self.List.append(key.Title)
+        let caller:ContractAddress = get_caller_address();
+
+        self.can_add_book(caller);
+
+        self.Books.write(key,key.Title); //writes a book struct as key, and title as value
         let mut count:u32 = 0;
         let mut arr2:Array<felt252> = ArrayTrait::new();
         count+=1;
@@ -122,13 +158,54 @@ impl DataBaseTraitImpl of super::DatabaseTrait<ContractState>{
         self.arr.write(arr2);
     }
     fn display_books(self:@ContractState)->Array<felt252>{
+
+        //self.arr.read();
+
         let mut arr2=ArrayTrait::<felt252>::new();
         arr2=self.arr.read();
         return arr2;
     }
 
+    
+
     fn search_book(self:@ContractState,key:Book)->felt252{
         self.Books.read(key)
+    }
+}
+
+#[generate_trait]
+impl InternalFunctions of InternalFunctionsTrait{
+
+    fn create_admin(ref self:ContractState,
+    admin_1:ContractAddress){
+        self.admin.write(admin_1,true);
+    }
+
+
+    fn create_student(ref self:ContractState,
+    student_1:ContractAddress,
+    student_2:ContractAddress,
+    student_3:ContractAddress){
+        self.student.write(student_1,true);
+        self.student.write(student_2,true);
+        self.student.write(student_3,true)
+    }
+
+
+}
+
+//Asserts implementation of the add_book function
+#[generate_trait]
+impl AssertsImpl of AssertsImplTrait{
+    fn can_add_book(ref self:ContractState,address:ContractAddress){
+        let is_admin:bool = self.admin.read((address));
+
+        if(is_admin == false){
+            self.emit( IllegalAdd {illegal_admin:address,});
+        }
+
+        assert(is_admin == true, 'ONLY ADMINS CAN ADD BOOK');
+
     }
 }
 
