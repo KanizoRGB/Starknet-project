@@ -6,16 +6,20 @@ The participant signs in as one of the two in order to access the library. Upon 
 
 The Learners have the following permissions:
 
-1.Search for a book
+1. Display Books
+
+2. Search for a book
 
 
 The admins have the following permissions:-
 
-1.Search for a book
+1.Display Books.
 
-2.Add a book.
+2.Search for a book.
 
-3.Delete a book.
+3.Add a book.
+
+4.Delete a book.
 
 Challenge::The library should employ a contract which should self reorganize to allow for an efficient search.
 
