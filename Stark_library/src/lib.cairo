@@ -14,6 +14,8 @@ trait DatabaseTrait<T> {
     fn add_book(ref self:T,key:Book);
 
     fn search_book(self:@T,key:Book)->felt252;
+
+    fn delete_book(ref self:T,bk_title:felt252);
 }
 
 
@@ -96,15 +98,6 @@ mod add_book{
         student:LegacyMap::<ContractAddress,bool>,
     }
 
-    // fn add_book2(ref self: ContractState,key:Book)->Array<felt252>{
-    //     let mut count:u32 = 0;
-    //     self.Books.write(key,key.Title); //writes a book struct as key, and title as value
-    //     count+=1;
-    //     let mut arr:Array<felt252> = ArrayTrait::new();
-    //     let mut bk:felt252= self.Books.read(key);
-    //     arr.append(bk)
-    // }
-
 #[constructor]
 fn constructor(ref self: ContractState,admin_1:ContractAddress,
 student_1:ContractAddress,
@@ -113,8 +106,6 @@ student_3:ContractAddress){
 
     self.create_admin(admin_1);
     self.create_student(student_1,student_2,student_3);
-    // self.create_student(student_2);
-    // self.create_student(student_3);
 
     let book1 = Book{Title:'Be Rich',};
     let book2 = Book{Title:'1000 ways',};
@@ -147,7 +138,7 @@ impl DataBaseTraitImpl of super::DatabaseTrait<ContractState>{
 
         let caller:ContractAddress = get_caller_address();
 
-        self.can_add_book(caller);
+        self.is_an_admin(caller);
 
         self.Books.write(key,key.Title); //writes a book struct as key, and title as value
         let mut count:u32 = 0;
@@ -158,19 +149,35 @@ impl DataBaseTraitImpl of super::DatabaseTrait<ContractState>{
         self.arr.write(arr2);
     }
     fn display_books(self:@ContractState)->Array<felt252>{
-
-        //self.arr.read();
-
         let mut arr2=ArrayTrait::<felt252>::new();
         arr2=self.arr.read();
         return arr2;
     }
-
-    
-
     fn search_book(self:@ContractState,key:Book)->felt252{
-        self.Books.read(key)
+       let found_book = self.Books.read(key);
+        assert(found_book != 0, 'BOOK NOT FOUND');
+        if found_book != 0 {
+            return found_book;
+        }
+        let no_book:felt252 = 'no book';
+        return no_book;
     }
+
+    fn delete_book(ref self:ContractState,bk_title:felt252){
+        let bk_struct:Book = Book{Title:bk_title,};
+        let del_book = self.Books.read(bk_struct);
+        assert(del_book != 0,'BOOK DOES NOT EXIST');
+
+        let caller:ContractAddress = get_caller_address();
+        self.is_an_admin(caller);
+
+        self.Books.write(bk_struct,' ');
+
+        let mut arr2=ArrayTrait::<felt252>::new();
+        arr2=self.arr.read();
+        let len = arr2.len();
+    }
+
 }
 
 #[generate_trait]
@@ -197,14 +204,14 @@ impl InternalFunctions of InternalFunctionsTrait{
 //Asserts implementation of the add_book function
 #[generate_trait]
 impl AssertsImpl of AssertsImplTrait{
-    fn can_add_book(ref self:ContractState,address:ContractAddress){
+    fn is_an_admin(ref self:ContractState,address:ContractAddress){
         let is_admin:bool = self.admin.read((address));
 
         if(is_admin == false){
             self.emit( IllegalAdd {illegal_admin:address,});
         }
 
-        assert(is_admin == true, 'ONLY ADMINS CAN ADD BOOK');
+        assert(is_admin == true, 'ONLY ADMINS CAN ADD/DELETE BOOK');
 
     }
 }
