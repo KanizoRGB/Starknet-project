@@ -1,0 +1,78 @@
+header{
+background-color: black;
+height: 10%;
+display: flex;
+background-image: url(lib_2.jpg);
+}
+.header{
+    
+    font-size: 100px;
+    text-shadow: 2px 2px rgb(0, 1, 6);
+}
+.header p{
+    margin-top: 20%;
+    /* margin-bottom: 1%; */
+    letter-spacing: 12px;
+    color:rgba(13, 1, 117, 0.904);
+}
+img{
+    height: 15em;
+    margin-left: 40px;
+    margin-top: 40px;
+    margin-right: 3%;
+}
+
+.first{
+    background-color: rgb(30, 7, 92);
+    height: 20em;
+    font-size: 20px;
+    display: flex;
+    padding-left: 10px;
+    /* justify-content: space-between; */
+
+}
+.first img{
+    width: 28%;
+}
+
+button{
+    height: 40px;
+    margin-top: 20%;
+    margin-right: 30px;
+    margin-left: 2%;
+    border-radius: 10px;
+    width: 80px; 
+}
+p{
+    color:white;
+}
+
+section{
+    background-color: brown;
+    padding-top: 1px;
+}
+
+.login{
+    background-color:rgb(30, 7, 92);
+    background-image: none;
+    color: whitesmoke;
+}
+#userType{
+    height:40px;
+    margin-top: 20%;
+    margin-right: 2%;
+    border-radius: 10px;
+
+}
+#username{
+    height:34px;
+    margin-top: 20%;
+    border-radius: 10px;
+    /* margin-right: 0px; */
+}
+.user{
+    margin-top: 20%;
+    color: white;
+    justify-content: flex-end;
+    font-size: large;
+}
