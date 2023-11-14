@@ -13,13 +13,13 @@ The Learners have the following permissions:
 
 The admins have the following permissions:-
 
-1.Display Books.
+1. Display Books.
 
-2.Search for a book.
+2. Search for a book.
 
-3.Add a book.
+3. Add a book.
 
-4.Delete a book.
+4. Delete a book.
 
 Challenge::The library should employ a contract which should self reorganize to allow for an efficient search.
 
